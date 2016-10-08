@@ -189,6 +189,7 @@ class LocustRunner(object):
         row["nodes"].add(node_id)
         self.exceptions[key] = row
 
+
 class LocalLocustRunner(LocustRunner):
     def __init__(self, locust_classes, options):
         super(LocalLocustRunner, self).__init__(locust_classes, options)
@@ -203,6 +204,7 @@ class LocalLocustRunner(LocustRunner):
         self.hatching_greenlet = gevent.spawn(lambda: super(LocalLocustRunner, self).start_hatching(locust_count, hatch_rate, wait=wait))
         self.greenlet = self.hatching_greenlet
 
+
 class DistributedLocustRunner(LocustRunner):
     def __init__(self, locust_classes, options):
         super(DistributedLocustRunner, self).__init__(locust_classes, options)
@@ -215,11 +217,13 @@ class DistributedLocustRunner(LocustRunner):
         """ Used to link() greenlets to in order to be compatible with gevent 1.0 """
         pass
 
+
 class SlaveNode(object):
     def __init__(self, id, state=STATE_INIT):
         self.id = id
         self.state = state
         self.user_count = 0
+
 
 class MasterLocustRunner(DistributedLocustRunner):
     def __init__(self, *args, **kwargs):
@@ -346,6 +350,7 @@ class MasterLocustRunner(DistributedLocustRunner):
     @property
     def slave_count(self):
         return len(self.clients.ready) + len(self.clients.hatching) + len(self.clients.running)
+
 
 class SlaveLocustRunner(DistributedLocustRunner):
     def __init__(self, *args, **kwargs):

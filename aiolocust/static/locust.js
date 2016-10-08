@@ -110,6 +110,7 @@ $(".stats_label").click(function(event) {
 
 function updateStats() {
     $.get('/stats/requests', function (data) {
+        console.log(data);
         report = JSON.parse(data);
         $("#total_rps").html(Math.round(report.total_rps*100)/100);
         //$("#fail_ratio").html(Math.round(report.fail_ratio*10000)/100);
@@ -138,6 +139,7 @@ updateStats();
 
 function updateExceptions() {
     $.get('/exceptions', function (data) {
+        console.info(data);
         $('#exceptions tbody').empty();
         $('#exceptions tbody').jqoteapp(exceptions_tpl, data.exceptions);
         setTimeout(updateExceptions, 5000);

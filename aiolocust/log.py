@@ -4,6 +4,7 @@ import socket
 
 host = socket.gethostname()
 
+
 def setup_logging(loglevel, logfile):
     numeric_level = getattr(logging, loglevel.upper(), None)
     if numeric_level is None:
@@ -17,6 +18,7 @@ def setup_logging(loglevel, logfile):
 
 stdout_logger = logging.getLogger("stdout")
 stderr_logger = logging.getLogger("stderr")
+
 
 class StdOutWrapper(object):
     """

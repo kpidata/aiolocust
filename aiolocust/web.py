@@ -1,42 +1,64 @@
 # encoding: utf-8
-
+import os
 import csv
 import json
-import os.path
+
 from time import time
 from itertools import chain
 from collections import defaultdict
 from six.moves import StringIO, xrange
 import six
+import jinja2
 
 from gevent import wsgi
+
+import aiohttp_jinja2
+
+from aiohttp import web
 from flask import Flask, make_response, request, render_template
 
 from . import runners
 from .cache import memoize
 from .runners import MasterLocustRunner
-from locust.stats import median_from_dict
-from locust import __version__ as version
+from aiolocust.stats import median_from_dict
+from aiolocust import __version__ as version
 
 import logging
 logger = logging.getLogger(__name__)
 
 DEFAULT_CACHE_TIME = 2.0
 
-app = Flask(__name__)
-app.debug = True
-app.root_path = os.path.dirname(os.path.abspath(__file__))
+# app = Flask(__name__)
+# app.debug = True
+
+root_path = os.path.dirname(os.path.abspath(__file__))
+app = web.Application()
 
 
-@app.route('/')
-def index():
+def setup_routes(app):
+    app.router.add_get('/', index)
+    app.router.add_post('/swarm', swarm)
+    app.router.add_get('/stop', stop)
+    app.router.add_get('/stats/reset', reset_stats)
+    app.router.add_get('/stats/requests/csv', request_stats_csv)
+    app.router.add_get('/stats/distribution/csv', distribution_stats_csv)
+    app.router.add_get('/stats/requests', request_stats)
+    app.router.add_get('/exceptions', exceptions)
+    app.router.add_get('/exceptions/csv', exceptions_csv)
+
+    # Static files
+    app.router.add_static('/static/', os.path.join(root_path, 'static'))
+
+
+@aiohttp_jinja2.template('index.html')
+def index(request):
     is_distributed = isinstance(runners.locust_runner, MasterLocustRunner)
     if is_distributed:
         slave_count = runners.locust_runner.slave_count
     else:
         slave_count = 0
     
-    return render_template("index.html",
+    return dict(
         state=runners.locust_runner.state,
         is_distributed=is_distributed,
         slave_count=slave_count,
@@ -44,8 +66,8 @@ def index():
         version=version
     )
 
-@app.route('/swarm', methods=["POST"])
-def swarm():
+
+def swarm(request):
     assert request.method == "POST"
 
     locust_count = int(request.form["locust_count"])
@@ -55,20 +77,20 @@ def swarm():
     response.headers["Content-type"] = "application/json"
     return response
 
-@app.route('/stop')
-def stop():
+
+def stop(request):
     runners.locust_runner.stop()
     response = make_response(json.dumps({'success':True, 'message': 'Test stopped'}))
     response.headers["Content-type"] = "application/json"
     return response
 
-@app.route("/stats/reset")
-def reset_stats():
+
+def reset_stats(request):
     runners.locust_runner.stats.reset_all()
     return "ok"
-    
-@app.route("/stats/requests/csv")
-def request_stats_csv():
+
+
+def request_stats_csv(request):
     rows = [
         ",".join([
             '"Method"',
@@ -105,8 +127,8 @@ def request_stats_csv():
     response.headers["Content-disposition"] = disposition
     return response
 
-@app.route("/stats/distribution/csv")
-def distribution_stats_csv():
+
+def distribution_stats_csv(request):
     rows = [",".join((
         '"Name"',
         '"# requests"',
@@ -133,9 +155,9 @@ def distribution_stats_csv():
     response.headers["Content-disposition"] = disposition
     return response
 
-@app.route('/stats/requests')
+
 @memoize(timeout=DEFAULT_CACHE_TIME, dynamic_timeout=True)
-def request_stats():
+def request_stats(request):
     stats = []
     for s in chain(_sort_stats(runners.locust_runner.request_stats), [runners.locust_runner.stats.aggregated_stats("Total")]):
         stats.append({
@@ -173,11 +195,12 @@ def request_stats():
     
     report["state"] = runners.locust_runner.state
     report["user_count"] = runners.locust_runner.user_count
-    return json.dumps(report)
+    return web.Response(body=json.dumps(report).encode(),
+                        content_type='application/json')
 
-@app.route("/exceptions")
-def exceptions():
-    response = make_response(json.dumps({
+
+def exceptions(request):
+    response = json.dumps({
         'exceptions': [
             {
                 "count": row["count"], 
@@ -186,12 +209,11 @@ def exceptions():
                 "nodes" : ", ".join(row["nodes"])
             } for row in six.itervalues(runners.locust_runner.exceptions)
         ]
-    }))
-    response.headers["Content-type"] = "application/json"
-    return response
+    })
+    return web.Response(text=response, content_type='application/json')
 
-@app.route("/exceptions/csv")
-def exceptions_csv():
+
+def exceptions_csv(request):
     data = StringIO()
     writer = csv.writer(data)
     writer.writerow(["Count", "Message", "Traceback", "Nodes"])
@@ -207,8 +229,15 @@ def exceptions_csv():
     response.headers["Content-disposition"] = disposition
     return response
 
+
 def start(locust, options):
-    wsgi.WSGIServer((options.web_host, options.port), app, log=None).serve_forever()
+    # wsgi.WSGIServer((options.web_host, options.port), app, log=None).serve_forever()
+    templates_dir = os.path.join(root_path, 'templates')
+    aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader(templates_dir))
+
+    setup_routes(app)
+    web.run_app(app)
+
 
 def _sort_stats(stats):
     return [stats[key] for key in sorted(six.iterkeys(stats))]

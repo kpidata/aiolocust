@@ -1,4 +1,4 @@
-import locust
+import aiolocust
 from . import runners
 
 import gevent
@@ -19,7 +19,8 @@ from .runners import MasterLocustRunner, SlaveLocustRunner, LocalLocustRunner
 from . import events
 
 _internals = [Locust, HttpLocust]
-version = locust.__version__
+version = aiolocust.__version__
+
 
 def parse_options():
     """
@@ -330,6 +331,7 @@ def load_locustfile(path):
     locusts = dict(filter(is_locust, vars(imported).items()))
     return imported.__doc__, locusts
 
+
 def main():
     parser, options, arguments = parse_options()
 
@@ -395,6 +397,7 @@ def main():
     if not options.no_web and not options.slave:
         # spawn web greenlet
         logger.info("Starting web monitor at %s:%s" % (options.web_host or "*", options.port))
+
         main_greenlet = gevent.spawn(web.start, locust_classes, options)
     
     if not options.master and not options.slave:
@@ -445,6 +448,7 @@ def main():
         shutdown(code=code)
     except KeyboardInterrupt as e:
         shutdown(0)
+
 
 if __name__ == '__main__':
     main()

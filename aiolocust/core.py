@@ -167,6 +167,7 @@ class TaskSetMeta(type):
         
         return type.__new__(mcs, classname, bases, classDict)
 
+
 @six.add_metaclass(TaskSetMeta)
 class TaskSet(object):
     """
@@ -353,4 +354,3 @@ class TaskSet(object):
         Locust instance.
         """
         return self.locust.client
-
