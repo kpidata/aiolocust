@@ -1,4 +1,8 @@
-# Locust
+# AioLocust
+
+Note, that support of Python 2 is strictly prohibited for aiolocust.
+Please, don't try to do anything that might at least theoretically leads us to support this version of the interpreter.
+After 2nd attempt you will be lifetime banned for the contribution to OpenSource projects (we will follow you).
 
 [![Build Status](https://secure.travis-ci.org/locustio/locust.png)](http://travis-ci.org/locustio/locust) 
 [![Gitter Chat](https://badges.gitter.im/locustio/locust.png)](https://gitter.im/locustio/locust) 

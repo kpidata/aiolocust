@@ -1,11 +1,9 @@
-import unittest
-import six
+from aiolocust.core import HttpLocust, Locust, TaskSet, task, events
+from aiolocust import ResponseError, InterruptTaskSet
+from aiolocust.exception import CatchResponseError, RescheduleTask, RescheduleTaskImmediately, LocustError
 
-from locust.core import HttpLocust, Locust, TaskSet, task, events
-from locust import ResponseError, InterruptTaskSet
-from locust.exception import CatchResponseError, RescheduleTask, RescheduleTaskImmediately, LocustError
+from aiolocust.test.testcases import LocustTestCase, WebserverTestCase
 
-from .testcases import LocustTestCase, WebserverTestCase
 
 class TestTaskSet(LocustTestCase):
     def setUp(self):
@@ -152,7 +150,7 @@ class TestTaskSet(LocustTestCase):
         
         l = MySubTaskSet(self.locust)
         self.assertEqual(2, len(l.tasks))
-        self.assertEqual([t1, six.get_unbound_function(MySubTaskSet.t2)], l.tasks)
+        self.assertEqual([t1, MySubTaskSet.t2], l.tasks)
     
     def test_task_decorator_with_or_without_argument(self):
         class MyTaskSet(TaskSet):
@@ -291,7 +289,7 @@ class TestTaskSet(LocustTestCase):
 
     
     def test_parent_attribute(self):
-        from locust.exception import StopLocust
+        from aiolocust.exception import StopLocust
         parents = {}
         
         class SubTaskSet(TaskSet):
@@ -403,7 +401,7 @@ class TestWebLocustClass(WebserverTestCase):
         self.assertEqual(401, unauthorized.client.get("/basic_auth").status_code)
     
     def test_log_request_name_argument(self):
-        from locust.stats import RequestStats, global_stats
+        from aiolocust.stats import global_stats
         self.response = ""
         
         class MyLocust(HttpLocust):
@@ -443,7 +441,7 @@ class TestWebLocustClass(WebserverTestCase):
         l = MyLocust()
         l.client.get("/redirect")
         
-        from locust.stats import global_stats
+        from aiolocust.stats import global_stats
         self.assertEqual(1, len(global_stats.entries))
         self.assertEqual(1, global_stats.get("/redirect", "GET").num_requests)
         self.assertEqual(0, global_stats.get("/ultra_fast", "GET").num_requests)

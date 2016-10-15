@@ -2,20 +2,17 @@
 import os
 import csv
 import json
+from io import StringIO
 
 from time import time
 from itertools import chain
 from collections import defaultdict
-from six.moves import StringIO, xrange
-import six
 import jinja2
-
-from gevent import wsgi
 
 import aiohttp_jinja2
 
 from aiohttp import web
-from flask import Flask, make_response, request, render_template
+from flask import make_response
 
 from . import runners
 from .cache import memoize
@@ -28,8 +25,6 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_CACHE_TIME = 2.0
 
-# app = Flask(__name__)
-# app.debug = True
 
 root_path = os.path.dirname(os.path.abspath(__file__))
 app = web.Application()
@@ -173,7 +168,7 @@ def request_stats(request):
             "avg_content_length": s.avg_content_length,
         })
     
-    report = {"stats":stats, "errors":[e.to_dict() for e in six.itervalues(runners.locust_runner.errors)]}
+    report = {"stats":stats, "errors":[e.to_dict() for e in runners.locust_runner.errors.values()]}
     if stats:
         report["total_rps"] = stats[len(stats)-1]["current_rps"]
         report["fail_ratio"] = runners.locust_runner.stats.aggregated_stats("Total").fail_ratio
@@ -183,7 +178,7 @@ def request_stats(request):
         # entry per url with the median response time as key and the number of requests as
         # value
         response_times = defaultdict(int) # used for calculating total median
-        for i in xrange(len(stats)-1):
+        for i in range(len(stats)-1):
             response_times[stats[i]["median_response_time"]] += stats[i]["num_requests"]
         
         # calculate total median
@@ -207,7 +202,7 @@ def exceptions(request):
                 "msg": row["msg"], 
                 "traceback": row["traceback"], 
                 "nodes" : ", ".join(row["nodes"])
-            } for row in six.itervalues(runners.locust_runner.exceptions)
+            } for row in runners.locust_runner.exceptions.values()
         ]
     })
     return web.Response(text=response, content_type='application/json')
@@ -217,7 +212,7 @@ def exceptions_csv(request):
     data = StringIO()
     writer = csv.writer(data)
     writer.writerow(["Count", "Message", "Traceback", "Nodes"])
-    for exc in six.itervalues(runners.locust_runner.exceptions):
+    for exc in runners.locust_runner.exceptions.values():
         nodes = ", ".join(exc["nodes"])
         writer.writerow([exc["count"], exc["msg"], exc["traceback"], nodes])
     
@@ -240,4 +235,4 @@ def start(locust, options):
 
 
 def _sort_stats(stats):
-    return [stats[key] for key in sorted(six.iterkeys(stats))]
+    return [stats[key] for key in sorted(stats.keys())]

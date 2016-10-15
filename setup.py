@@ -14,11 +14,13 @@ with open(_init_file, 'rb') as f:
         f.read().decode('utf-8')).group(1)))
 
 install_requires = [
+    "aiohttp==1.0.5",
+    "aiohttp-jinja2==0.8.0",
+    "async-timeout==1.0.0",
     "gevent==1.1.2",
     "flask>=0.10.1",
     "requests>=2.9.1",
     "msgpack-python>=0.4.2",
-    "six>=1.10.0",
     "pyzmq==15.2.0"
 ]
 

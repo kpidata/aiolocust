@@ -1,10 +1,10 @@
 from requests.exceptions import (RequestException, MissingSchema,
         InvalidSchema, InvalidURL)
 
-import gevent
-from locust.clients import HttpSession
-from locust.stats import global_stats
-from .testcases import WebserverTestCase
+from aiolocust.clients import HttpSession
+from aiolocust.stats import global_stats
+from aiolocust.test.testcases import WebserverTestCase
+
 
 class TestHttpSession(WebserverTestCase):
     def test_get(self):
@@ -67,4 +67,3 @@ class TestHttpSession(WebserverTestCase):
         get_stats = global_stats.get(url, method="GET")
         self.assertEqual(1, post_stats.num_requests)
         self.assertEqual(0, get_stats.num_requests)
-    

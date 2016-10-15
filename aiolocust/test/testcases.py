@@ -6,10 +6,9 @@ import unittest
 from copy import copy
 from io import BytesIO
 import sys
-import six
 
-from locust import events
-from locust.stats import global_stats
+from aiolocust import events
+from aiolocust.stats import global_stats
 from flask import Flask, request, redirect, make_response, send_file, Response, stream_with_context
 
 
@@ -125,7 +124,7 @@ class LocustTestCase(unittest.TestCase):
                 self._event_handlers[event] = copy(event._handlers)
                       
     def tearDown(self):
-        for event, handlers in six.iteritems(self._event_handlers):
+        for event, handlers in self._event_handlers.items():
             event._handlers = handlers
     
     def assertIn(self, member, container, msg=None):
