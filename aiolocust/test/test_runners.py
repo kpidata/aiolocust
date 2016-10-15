@@ -6,14 +6,14 @@ import mock
 from gevent.queue import Queue
 from gevent import sleep
 
-from locust.runners import LocalLocustRunner, MasterLocustRunner, SlaveLocustRunner
-from locust.core import Locust, task, TaskSet
-from locust.exception import LocustError
-from locust.rpc import Message
-from locust.stats import RequestStats, global_stats
-from locust.main import parse_options
-from locust.test.testcases import LocustTestCase
-from locust import events
+from aiolocust.runners import LocalLocustRunner, MasterLocustRunner, SlaveLocustRunner
+from aiolocust.core import Locust, task, TaskSet
+from aiolocust.exception import LocustError
+from aiolocust.rpc import Message
+from aiolocust.stats import RequestStats, global_stats
+from aiolocust.main import parse_options
+from aiolocust.test.testcases import LocustTestCase
+from aiolocust import events
 
 
 def mocked_rpc_server():
@@ -60,7 +60,7 @@ class TestMasterRunner(LocustTestCase):
         class MyTestLocust(Locust):
             pass
         
-        with mock.patch("locust.rpc.rpc.Server", mocked_rpc_server()) as server:
+        with mock.patch("aiolocust.rpc.rpc.Server", mocked_rpc_server()) as server:
             master = MasterLocustRunner(MyTestLocust, self.options)
             server.mocked_send(Message("client_ready", None, "zeh_fake_client1"))
             sleep(0)
@@ -82,7 +82,7 @@ class TestMasterRunner(LocustTestCase):
         class MyTestLocust(Locust):
             pass
         
-        with mock.patch("locust.rpc.rpc.Server", mocked_rpc_server()) as server:
+        with mock.patch("aiolocust.rpc.rpc.Server", mocked_rpc_server()) as server:
             master = MasterLocustRunner(MyTestLocust, self.options)
             server.mocked_send(Message("client_ready", None, "fake_client"))
             sleep(0)
@@ -134,7 +134,7 @@ class TestMasterRunner(LocustTestCase):
         class MyTestLocust(Locust):
             pass
         
-        with mock.patch("locust.rpc.rpc.Server", mocked_rpc_server()) as server:
+        with mock.patch("aiolocust.rpc.rpc.Server", mocked_rpc_server()) as server:
             master = MasterLocustRunner(MyTestLocust, self.options)
             for i in range(5):
                 server.mocked_send(Message("client_ready", None, "fake_client%i" % i))
@@ -155,7 +155,7 @@ class TestMasterRunner(LocustTestCase):
         class MyTestLocust(Locust):
             pass
         
-        with mock.patch("locust.rpc.rpc.Server", mocked_rpc_server()) as server:
+        with mock.patch("aiolocust.rpc.rpc.Server", mocked_rpc_server()) as server:
             master = MasterLocustRunner(MyTestLocust, self.options)
             for i in range(5):
                 server.mocked_send(Message("client_ready", None, "fake_client%i" % i))

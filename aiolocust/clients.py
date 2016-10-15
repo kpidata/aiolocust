@@ -1,8 +1,6 @@
 import re
 import time
-from datetime import timedelta
-from six.moves.urllib.parse import urlparse, urlunparse
-import six
+from urllib.parse import urlparse, urlunparse
 
 import requests
 from requests import Response, Request
@@ -236,7 +234,7 @@ class ResponseContextManager(LocustResponse):
                 if response.content == "":
                     response.failure("No data")
         """
-        if isinstance(exc, six.string_types):
+        if isinstance(exc, str):
             exc = CatchResponseError(exc)
         
         events.request_failure.fire(

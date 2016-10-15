@@ -1,14 +1,12 @@
 import unittest
 import time
 
-from requests.exceptions import RequestException
-from six.moves import xrange
+from aiolocust.test.testcases import WebserverTestCase
+from aiolocust.stats import RequestStats, StatsEntry, global_stats
+from aiolocust.core import HttpLocust, Locust, TaskSet, task
+from aiolocust.inspectlocust import get_task_ratio_dict
+from aiolocust.rpc.protocol import Message
 
-from .testcases import WebserverTestCase
-from locust.stats import RequestStats, StatsEntry, global_stats
-from locust.core import HttpLocust, Locust, TaskSet, task
-from locust.inspectlocust import get_task_ratio_dict
-from locust.rpc.protocol import Message
 
 class TestRequestStats(unittest.TestCase):
     def setUp(self):
@@ -28,7 +26,7 @@ class TestRequestStats(unittest.TestCase):
 
     def test_percentile(self):
         s = StatsEntry(self.stats, "percentile_test", "GET")
-        for x in xrange(100):
+        for x in range(100):
             s.log(x, 0)
 
         self.assertEqual(s.get_response_time_percentile(0.5), 50)
@@ -218,7 +216,7 @@ class TestRequestStatsWithWebserver(WebserverTestCase):
             max_wait = 1
             
         try:
-            from locust.exception import StopLocust
+            from aiolocust.exception import StopLocust
             global_stats.clear_all()
             global_stats.max_requests = 2
             
@@ -251,7 +249,7 @@ class TestRequestStatsWithWebserver(WebserverTestCase):
             max_wait = 1
             
         try:
-            from locust.exception import StopLocust
+            from aiolocust.exception import StopLocust
             global_stats.clear_all()
             global_stats.max_requests = 3
             
