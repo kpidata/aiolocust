@@ -1,16 +1,18 @@
-import sys, os, re, ast
+import os, re, ast
 
 from setuptools import setup, find_packages, Command
-
 
 # parse version from __init__.py
 _version_re = re.compile(r'__version__\s+=\s+(.*)')
 _init_file = os.path.join(os.path.abspath(os.path.dirname(__file__)),
-                          "aiolocust",
+                          'aiolocust',
                           "__init__.py")
 with open(_init_file, 'rb') as f:
     version = str(ast.literal_eval(_version_re.search(
         f.read().decode('utf-8')).group(1)))
+
+LONG_DESCRIPTION = """Locust is a python utility for doing easy, distributed
+load testing of a web site"""
 
 install_requires = [
     "aiohttp==1.0.5",
@@ -23,23 +25,24 @@ install_requires = [
     "pyzmq==15.2.0"
 ]
 
+tests_require = [
+    'pytest-runner',
+    'mock',
+    'pytest',
+]
+
 setup(
     name='aiolocust',
     version=version,
-    description="Website load testing framework",
-    long_description="""Locust is a python utility for doing easy, distributed load testing of a web site""",
+    description='Website load testing framework',
+    long_description=LONG_DESCRIPTION,
     classifiers=[
         "Topic :: Software Development :: Testing :: Traffic Generation",
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.6",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.3",
-        "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
         "Intended Audience :: Developers",
         "Intended Audience :: System Administrators",
@@ -53,7 +56,11 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
-    tests_require=['unittest2', 'mock'],
+    tests_require=tests_require,
+    extras_require={
+        'testing': tests_require,
+        'dev': install_requires + tests_require
+    },
     entry_points={
         'console_scripts': [
             'aiolocust = aiolocust.main:main',
