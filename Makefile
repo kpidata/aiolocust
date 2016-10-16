@@ -5,4 +5,4 @@ build_docs:
 	sphinx-build -b html docs/ docs/_build/
 
 tests:
-    py.test -sv aiolocust/test
+	py.test -sv aiolocust/test

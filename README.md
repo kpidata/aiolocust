@@ -4,17 +4,16 @@ Note, that support of Python 2 is strictly prohibited for aiolocust.
 Please, don't try to do anything that might at least theoretically leads us to support this version of the interpreter.
 After 2nd attempt you will be lifetime banned for the contribution to OpenSource projects (we will follow you).
 
-[![Build Status](https://secure.travis-ci.org/locustio/locust.png)](http://travis-ci.org/locustio/locust) 
-[![Gitter Chat](https://badges.gitter.im/locustio/locust.png)](https://gitter.im/locustio/locust) 
+[![Build Status](https://api.travis-ci.org/kpidata/aiolocust.png)](http://travis-ci.org/kpidata/aiolocust) 
 
 ## Links
 
-* Website: <a href="http://locust.io">locust.io</a>
-* Documentation: <a href="http://docs.locust.io">docs.locust.io</a>
+* Website: 
+* Documentation: 
 
 ## Description
 
-Locust is an easy-to-use, distributed, user load testing tool. It is intended for load-testing web sites (or other systems) and
+Aiolocust is an easy-to-use, distributed, user load testing tool. It is intended for load-testing web sites (or other systems) and
 figuring out how many concurrent users a system can handle.
 
 The idea is that during a test, a swarm of locusts will attack your website. The behavior of each locust (or test user if you will) is 
@@ -28,36 +27,23 @@ This allows you to write very expressive scenarios in Python without complicatin
 
 
 ## Features
-* **Write user test scenarios in plain-old Python**<br>
- No need for clunky UIs or bloated XML—just code as you normally would. Based on coroutines instead
-of callbacks, your code looks and behaves like normal, blocking Python code.
 
-* **Distributed & Scalable - supports hundreds of thousands of users**<br>
- Locust supports running load tests distributed over multiple machines.
- Being event-based, even one Locust node can handle thousands of users in a single process.
- Part of the reason behind this is that even if you simulate that many users, not all are actively hitting your system. Often, users are idle figuring out what to do next. Requests per second != number of users online.
-
-* **Web-based UI**<br>
- Locust has a neat HTML+JS that shows all relevent test details in real-time. And since the UI is web-based, it's cross-platform and easily extendable. 
-
-* **Can test any system**<br>
- Even though Locust is web-oriented, it can be used to test almost any system. Just write a client for what ever you wish to test and swarm it with locusts! It's super easy!
-
-* **Hackable**<br>
- Locust is very small and very hackable and we intend to keep it that way. All heavy-lifting of evented I/O and coroutines are delegated to gevent. The brittleness of alternative testing tools was the reason we created Locust.
+* Write user test scenarios in plain-old Python
+* Distributed & Scalable - supports hundreds of thousands of users
+* Web-based UI
+* Can test any system
+* Hackable
 
 
 ## Documentation
 
-More info and documentation can be found at: <a href="http://docs.locust.io/">http://docs.locust.io/</a>
+More info and documentation can be found at: 
 
 
 ## Authors
 
-- <a href="http://cgbystrom.com">Carl Bystr&ouml;m</a> (@<a href="http://twitter.com/cgbystrom">cgbystrom</a> on Twitter)
-- <a href="http://heyman.info">Jonatan Heyman</a> (@<a href="http://twitter.com/jonatanheyman">jonatanheyman</a> on Twitter)
-- Joakim Hamrén (@<a href="http://twitter.com/Jahaaja">Jahaaja</a>)
-- Hugo Heyman (@<a href="http://twitter.com/hugoheyman">hugoheyman</a>)
+* Viacheslav Kakovskyi (@kakovskyi)
+* Behersky Misha (@bmwant)
 
 ## License
 
@@ -66,5 +52,5 @@ Open source licensed under the MIT license (see _LICENSE_ file for details).
 
 ## Supported Python Versions
 
-Locust supports Python 2.6, 2.7 and 3.4.
+Aiolocust support *only* Python 3.5
 
