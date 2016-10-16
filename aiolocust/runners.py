@@ -11,10 +11,10 @@ import gevent
 from gevent import GreenletExit
 from gevent.pool import Group
 
-from . import events
-from .stats import global_stats
+from aiolocust import events
+from aiolocust.stats import global_stats
 
-from .rpc import rpc, Message
+from aiolocust.rpc import rpc, Message
 
 logger = logging.getLogger(__name__)
 
@@ -113,7 +113,7 @@ class LocustRunner(object):
                         locust().run()
                     except GreenletExit:
                         pass
-                new_locust = self.locusts.spawn(start_locust, locust)
+                self.locusts.spawn(start_locust, locust)
                 if len(self.locusts) % 10 == 0:
                     logger.debug("%i locusts hatched" % len(self.locusts))
                 gevent.sleep(sleep_time)
@@ -287,11 +287,11 @@ class MasterLocustRunner(DistributedLocustRunner):
         
         for client in self.clients.values():
             data = {
-                "hatch_rate":slave_hatch_rate,
-                "num_clients":slave_num_clients,
+                "hatch_rate": slave_hatch_rate,
+                "num_clients": slave_num_clients,
                 "num_requests": self.num_requests,
-                "host":self.host,
-                "stop_timeout":None
+                "host": self.host,
+                "stop_timeout": None
             }
 
             if remaining > 0:
@@ -353,7 +353,7 @@ class MasterLocustRunner(DistributedLocustRunner):
 class SlaveLocustRunner(DistributedLocustRunner):
     def __init__(self, *args, **kwargs):
         super(SlaveLocustRunner, self).__init__(*args, **kwargs)
-        self.client_id = socket.gethostname() + "_" + md5(str(time() + random.randint(0,10000)).encode('utf-8')).hexdigest()
+        self.client_id = socket.gethostname() + "_" + md5(str(time() + random.randint(0, 10000)).encode('utf-8')).hexdigest()
         
         self.client = rpc.Client(self.master_host, self.master_port)
         self.greenlet = Group()
@@ -390,7 +390,6 @@ class SlaveLocustRunner(DistributedLocustRunner):
                 self.client.send(Message("hatching", None, self.client_id))
                 job = msg.data
                 self.hatch_rate = job["hatch_rate"]
-                #self.num_clients = job["num_clients"]
                 self.num_requests = job["num_requests"]
                 self.host = job["host"]
                 self.hatching_greenlet = gevent.spawn(lambda: self.start_hatching(locust_count=job["num_clients"], hatch_rate=job["hatch_rate"]))

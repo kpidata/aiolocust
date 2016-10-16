@@ -1,6 +1,3 @@
-import aiolocust
-from . import runners
-
 import gevent
 import sys
 import os
@@ -10,13 +7,15 @@ import logging
 import socket
 from optparse import OptionParser
 
-from . import web
-from .log import setup_logging, console_logger
-from .stats import stats_printer, print_percentile_stats, print_error_report, print_stats
-from .inspectlocust import print_task_ratio, get_task_ratio_dict
-from .core import Locust, HttpLocust
-from .runners import MasterLocustRunner, SlaveLocustRunner, LocalLocustRunner
-from . import events
+import aiolocust
+from aiolocust import runners
+from aiolocust import web
+from aiolocust.log import setup_logging, console_logger
+from aiolocust.stats import stats_printer, print_percentile_stats, print_error_report, print_stats
+from aiolocust.inspectlocust import print_task_ratio, get_task_ratio_dict
+from aiolocust.core import Locust, HttpLocust
+from aiolocust.runners import MasterLocustRunner, SlaveLocustRunner, LocalLocustRunner
+from aiolocust import events
 
 _internals = [Locust, HttpLocust]
 version = aiolocust.__version__

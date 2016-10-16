@@ -31,6 +31,7 @@ class StdOutWrapper(object):
         """No-op for wrapper"""
         pass
 
+
 class StdErrWrapper(object):
     """
     Wrapper for stderr
