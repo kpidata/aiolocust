@@ -1,10 +1,9 @@
-# encoding: utf-8
-
-from setuptools import setup, find_packages, Command
 import sys, os, re, ast
 
+from setuptools import setup, find_packages, Command
 
-# parse version from locust/__init__.py
+
+# parse version from __init__.py
 _version_re = re.compile(r'__version__\s+=\s+(.*)')
 _init_file = os.path.join(os.path.abspath(os.path.dirname(__file__)),
                           "aiolocust",
@@ -46,8 +45,8 @@ setup(
         "Intended Audience :: System Administrators",
     ],
     keywords='',
-    author='',
-    author_email='',
+    author='KPIdata',
+    author_email='kpidatahq@gmail.com',
     url='http://kpidata.org',
     license='MIT',
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
