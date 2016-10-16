@@ -2,11 +2,12 @@ import time
 import gevent
 import hashlib
 
-from . import events
-from .exception import StopLocust
-from .log import console_logger
+from aiolocust import events
+from aiolocust.exception import StopLocust
+from aiolocust.log import console_logger
 
 STATS_NAME_WIDTH = 60
+
 
 class RequestStatsAdditionError(Exception):
     pass

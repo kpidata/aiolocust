@@ -2,6 +2,7 @@
 import os
 import csv
 import json
+import logging
 from io import StringIO
 
 from time import time
@@ -10,17 +11,15 @@ from collections import defaultdict
 import jinja2
 
 import aiohttp_jinja2
-
 from aiohttp import web
 from flask import make_response
 
-from . import runners
-from .cache import memoize
-from .runners import MasterLocustRunner
+from aiolocust import runners
+from aiolocust.cache import memoize
+from aiolocust.runners import MasterLocustRunner
 from aiolocust.stats import median_from_dict
 from aiolocust import __version__ as version
 
-import logging
 logger = logging.getLogger(__name__)
 
 DEFAULT_CACHE_TIME = 2.0

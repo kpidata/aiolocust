@@ -1,7 +1,7 @@
 import inspect
 
-from .core import Locust, TaskSet
-from .log import console_logger
+from aiolocust.core import Locust, TaskSet
+from aiolocust.log import console_logger
 
 
 def print_task_ratio(locusts, total=False, level=0, parent_ratio=1.0):

@@ -9,10 +9,11 @@ import random
 import traceback
 import logging
 
-from .clients import HttpSession
-from . import events
+from aiolocust.clients import HttpSession
+from aiolocust import events
 
-from .exception import LocustError, InterruptTaskSet, RescheduleTask, RescheduleTaskImmediately, StopLocust
+from aiolocust.exception import (LocustError, InterruptTaskSet, RescheduleTask,
+                                 RescheduleTaskImmediately, StopLocust)
 
 logger = logging.getLogger(__name__)
 
@@ -257,7 +258,7 @@ class TaskSet(object, metaclass=TaskSetMeta):
             else:
                 raise RescheduleTask(e.reschedule)
         
-        while (True):
+        while True:
             try:
                 if self.locust.stop_timeout is not None and time() - self._time_start > self.locust.stop_timeout:
                     return
