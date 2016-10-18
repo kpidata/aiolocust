@@ -6,7 +6,7 @@ from io import StringIO
 
 import requests
 import gevent
-from gevent import wsgi
+import aiohttp
 
 from aiolocust import web, runners, stats
 from aiolocust.runners import LocustRunner
@@ -23,19 +23,22 @@ class TestWebUI(LocustTestCase):
         options = parser.parse_args([])[0]
         runners.locust_runner = LocustRunner([], options)
         
-        web.request_stats.clear_cache()
-        
-        self._web_ui_server = wsgi.WSGIServer(('127.0.0.1', 0), web.app, log=None)
-        gevent.spawn(lambda: self._web_ui_server.serve_forever())
+        # web.request_stats.clear_cache()
+
+        self._web_ui_server = web.app
+        port = 8973
+        web.setup_app(web.app)
+        gevent.spawn(lambda: aiohttp.web.run_app(web.app, port=port))
         gevent.sleep(0.01)
-        self.web_port = self._web_ui_server.server_port
+
+        self.web_port = port
     
     def tearDown(self):
         super(TestWebUI, self).tearDown()
-        self._web_ui_server.stop()
     
     def test_index(self):
-        self.assertEqual(200, requests.get("http://127.0.0.1:%i/" % self.web_port).status_code)
+        resp = requests.get("http://127.0.0.1:%i/" % self.web_port)
+        self.assertEqual(200, resp.status_code)
     
     def test_stats_no_data(self):
         self.assertEqual(200, requests.get("http://127.0.0.1:%i/stats/requests" % self.web_port).status_code)
@@ -118,4 +121,3 @@ class TestWebUI(LocustTestCase):
         self.assertEqual(2, len(rows))
         self.assertEqual("Test exception", rows[1][1])
         self.assertEqual(2, int(rows[1][0]), "Exception count should be 2")
-        

@@ -224,12 +224,16 @@ def exceptions_csv(request):
     return response
 
 
-def start(locust, options):
-    # wsgi.WSGIServer((options.web_host, options.port), app, log=None).serve_forever()
+def setup_app(app):
     templates_dir = os.path.join(root_path, 'templates')
     aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader(templates_dir))
 
     setup_routes(app)
+
+
+def start(locust, options):
+    # wsgi.WSGIServer((options.web_host, options.port), app, log=None).serve_forever()
+    setup_app(app)
     web.run_app(app)
 
 
